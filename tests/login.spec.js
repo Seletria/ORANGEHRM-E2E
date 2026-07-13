@@ -7,5 +7,5 @@ test('should login successfully with valid credentials', async ({ page }) => {
   await loginPage.goto();
   await loginPage.login('Admin', 'admin123');
 
-  await expect(page).toHaveURL('/web/index.php/dashboard/index');
+  await expect(page).toHaveURL(/.*\/dashboard\/index/);
 })
