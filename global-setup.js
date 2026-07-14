@@ -4,7 +4,8 @@ import { LoginPage } from './pages/LoginPage';
 
 async function globalSetup(config) {
   const browser = await chromium.launch();
-  const page = await browser.newPage();
+  const page = await browser.newPage({ baseURL: 'https://opensource-demo.orangehrmlive.com' });
+
 
   const loginPage = new LoginPage(page);
   await loginPage.goto();
