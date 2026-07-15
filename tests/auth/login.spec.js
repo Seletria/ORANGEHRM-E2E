@@ -1,5 +1,7 @@
 import { test, expect } from "@playwright/test";
-import { LoginPage } from "../pages/LoginPage";
+import { LoginPage } from "../../pages/LoginPage";
+
+test.use({ storageState: { cookies: [], origins: [] } });
 
 test('should login successfully with valid credentials', async ({ page }) => {
 
