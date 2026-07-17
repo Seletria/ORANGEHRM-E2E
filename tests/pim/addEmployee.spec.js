@@ -5,6 +5,7 @@ import { PimListPage } from '../../pages/pim/PimListPage';
 import { AddEmployeePage } from '../../pages/pim/AddEmployeePage';
 
 test('should add new employee successfully', async ({ page }) => {
+  const successToast = page.locator('.oxd-text--toast-message');
   await page.goto('/web/index.php/dashboard/index');
 
   const navigationMenu = new NavigationMenu(page);
@@ -13,9 +14,10 @@ test('should add new employee successfully', async ({ page }) => {
 
   await navigationMenu.gotoPIM();
   await pimListPage.clickAddEmployee();
-  await addEmployeePage.fillEmployeeName('ASDasd', 'aaaa', 'asdasda');
+  await addEmployeePage.fillEmployeeInformation();
   await addEmployeePage.saveEmployeeInformation();
 
+  await expect(successToast).toContainText('Successfully Saved');
   await expect(page).toHaveURL(/.*viewPersonalDetails\/empNumber\/\d+/);
 
 })

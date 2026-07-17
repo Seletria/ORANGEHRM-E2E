@@ -4,13 +4,18 @@ export class AddEmployeePage {
     this.firstNameInput = page.getByPlaceholder('First Name');
     this.middleNameInput = page.getByPlaceholder('Middle Name');
     this.lastNameInput = page.getByPlaceholder('Last Name');
+    this.employeeIdInput = page.getByText('Employee Id').locator('..').locator('..').locator('input');
     this.saveButton = page.getByRole('button', { name: 'Save' });
   }
 
-  async fillEmployeeName(firstName, middleName, lastName) {
-    await this.firstNameInput.fill(firstName);
-    await this.middleNameInput.fill(middleName);
-    await this.lastNameInput.fill(lastName);
+  async fillEmployeeInformation() {
+    const randomWord = Array.from({ length: 5 }, () => "abcdefghijklmnopqrstuvwxyz"[Math.floor(Math.random() * 26)]).join('');
+    const randomIdNumber = Math.floor(Math.random() * 1000).toString().padStart(4, '0');
+
+    await this.firstNameInput.fill(randomWord);
+    await this.middleNameInput.fill(randomWord);
+    await this.lastNameInput.fill(randomWord);
+    await this.employeeIdInput.fill(randomIdNumber);
 
   }
 
