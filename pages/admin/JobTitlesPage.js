@@ -25,6 +25,10 @@ export class JobTitlesPage {
   }
 
   async save() {
+    const responsePromise = this.page.waitForResponse(
+      res => res.url().includes('/api/v2/admin/job-titles') && res.request().method() === 'POST'
+    );
     await this.saveButton.click();
+    await responsePromise;
   }
 }
