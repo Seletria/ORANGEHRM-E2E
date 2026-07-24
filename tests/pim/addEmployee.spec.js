@@ -1,4 +1,3 @@
-// import { test, expect } from '../../fixtures/authFixture';
 import { test, expect } from '@playwright/test';
 import { NavigationMenu } from '../../pages/NavigationMenu';
 import { PimListPage } from '../../pages/pim/PimListPage';

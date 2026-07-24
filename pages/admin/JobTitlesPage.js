@@ -1,3 +1,5 @@
+import { expect } from '@playwright/test';
+
 export class JobTitlesPage {
   constructor(page) {
     this.page = page;
@@ -30,5 +32,24 @@ export class JobTitlesPage {
     );
     await this.saveButton.click();
     await responsePromise;
+  }
+
+  async deleteJobTitleViaUI(name) {
+    const row = this.page
+      .locator('.oxd-table-card')
+      .filter({ hasText: name });
+
+    const deleteButton = row.locator('button:has(i.bi-trash)');
+
+    await deleteButton.click();
+
+    const confirmButton = this.page.getByRole('button', { name: 'Yes, Delete' });
+
+    const [response] = await Promise.all([
+      this.page.waitForResponse(res => res.url().includes('/job-titles') && res.request().method() === 'DELETE'),
+      confirmButton.click(),
+    ])
+    expect(response.status()).toBe(200);
+
   }
 }
