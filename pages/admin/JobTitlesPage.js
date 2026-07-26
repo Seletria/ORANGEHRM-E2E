@@ -30,9 +30,9 @@ export class JobTitlesPage {
     await this.jobDescription.fill(description);
   }
 
-  async save() {
+  async save(expectedMethod = 'POST') {
     const responsePromise = this.page.waitForResponse(
-      res => res.url().includes('/api/v2/admin/job-titles') && res.request().method() === 'POST'
+      res => res.url().includes('/api/v2/admin/job-titles') && res.request().method() === expectedMethod
     );
     await this.saveButton.click();
     await responsePromise;
@@ -52,5 +52,15 @@ export class JobTitlesPage {
     ])
     expect(response.status()).toBe(200);
 
+  }
+
+  async editJobTitleViaUI(currentName, newTitle, newDescription) {
+    const row = this.#getRowByName(currentName);
+    const editButton = row.locator('button:has(i.bi-pencil-fill)');
+
+    await editButton.click();
+
+    await this.fillJobTitleForm(newTitle, newDescription);
+    await this.save('PUT');
   }
 }
