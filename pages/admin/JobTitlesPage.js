@@ -13,6 +13,10 @@ export class JobTitlesPage {
     this.successToast = page.locator('.oxd-toast--success');
   }
 
+  #getRowByName(name) {
+    return this.page.locator('.oxd-table-card').filter({ hasText: name });
+  }
+
   async goto() {
     await this.page.goto('/web/index.php/admin/viewJobTitleList');
   }
@@ -35,10 +39,7 @@ export class JobTitlesPage {
   }
 
   async deleteJobTitleViaUI(name) {
-    const row = this.page
-      .locator('.oxd-table-card')
-      .filter({ hasText: name });
-
+    const row = this.#getRowByName(name);
     const deleteButton = row.locator('button:has(i.bi-trash)');
 
     await deleteButton.click();
