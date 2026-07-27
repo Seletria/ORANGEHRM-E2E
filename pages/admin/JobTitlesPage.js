@@ -58,9 +58,20 @@ export class JobTitlesPage {
     const row = this.#getRowByName(currentName);
     const editButton = row.locator('button:has(i.bi-pencil-fill)');
 
+    const getResponsePromise = this.page.waitForResponse(
+      res => res.url().includes('/api/v2/admin/job-titles/') && res.request().method() === 'GET'
+    );
+
     await editButton.click();
+    await getResponsePromise;
+
+    const validationPromise = this.page.waitForResponse(
+      res => res.url().includes('/core/validation/unique')
+    );
 
     await this.fillJobTitleForm(newTitle, newDescription);
+    await validationPromise;
+
     await this.save('PUT');
   }
 }
