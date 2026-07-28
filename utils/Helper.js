@@ -15,3 +15,13 @@ export async function deleteJobTitleAndExpectStatus(request, id, expectedStatus 
   expect(response.status()).toBe(expectedStatus);
   return response;
 }
+
+export async function createJobTitleAndExpectStatus(request, title, description = '') {
+  const response = await request.post('/web/index.php/api/v2/admin/job-titles', {
+    data: { title, description, specification: null, note: '' }
+  });
+
+  expect(response.status()).toBe(200);
+  const id = await getJobTitleIdByName(request, title);
+  return id;
+}

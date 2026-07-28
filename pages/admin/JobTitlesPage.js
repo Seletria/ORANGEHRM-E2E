@@ -11,6 +11,7 @@ export class JobTitlesPage {
     this.saveButton = page.getByRole('button', { name: "Save" });
 
     this.successToast = page.locator('.oxd-toast--success');
+    this.titleErrorMessage = page.locator('.oxd-input-field-error-message');
   }
 
   #getRowByName(name) {
@@ -25,7 +26,7 @@ export class JobTitlesPage {
     await this.addJobTitleButton.click();
   }
 
-  async fillJobTitleForm(name, description) {
+  async fillJobTitleForm(name, description = '') {
     await this.jobTitleInput.fill(name);
     await this.jobDescription.fill(description);
   }

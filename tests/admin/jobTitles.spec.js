@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { JobTitlesPage } from '../../pages/admin/JobTitlesPage';
-import { getJobTitleIdByName, deleteJobTitleAndExpectStatus } from '../../utils/Helper';
+import { getJobTitleIdByName, deleteJobTitleAndExpectStatus, createJobTitleAndExpectStatus } from '../../utils/Helper';
 
 test.describe('Job Titles', () => {
   let createdTitleName;
@@ -61,4 +61,23 @@ test.describe('Job Titles', () => {
     const id = await getJobTitleIdByName(request, updatedName);
     expect(id).not.toBeNull();
   });
+
+  test('should not allow duplicate job title', async ({ page, request }) => {
+    createdTitleName = `QA_Test_${Date.now()}`;
+
+    await createJobTitleAndExpectStatus(request, createdTitleName);
+
+    await jobTitlePage.openForm();
+    await jobTitlePage.fillJobTitleForm(createdTitleName, 'Duplicate job title');
+
+    await expect(jobTitlePage.titleErrorMessage).toBeVisible();
+  })
+
+  test('should not empty job title', async ({ page, request }) => {
+    await jobTitlePage.openForm();
+    await jobTitlePage.fillJobTitleForm('');
+    await jobTitlePage.saveButton.click();
+
+    await expect(jobTitlePage.titleErrorMessage).toBeVisible();
+  })
 })
