@@ -25,3 +25,32 @@ export async function createJobTitleAndExpectStatus(request, title, description 
   const id = await getJobTitleIdByName(request, title);
   return id;
 }
+
+export async function getEmpNumberByUsername(request, username) {
+  const response = await request.get(`/api/v2/admin/users?username=${username}`);
+
+  if (!response.ok()) {
+    throw new Error(`User search request failed: ${response.status()}`)
+  };
+  const body = await response.json();
+  if (!body.data || body.data.length === 0) {
+    throw new Error(`A user with the username '${username}' was not found.`);
+  }
+  return body.data[0].employee.empNumber;
+}
+
+export async function getLeaveTypeIdByName(request, name) {
+  const response = await request.get('/api/v2/leave/leave-types?limit=0');
+  if (!response.ok()) {
+    throw new Error(`Leave type search request failed: ${response.status()}`);
+  }
+
+  const body = await response.json();
+  const leaveType = body.data.find(type => type.name === name);
+
+  if (!leaveType) {
+    throw new Error(`A leave type with the name '${name}' was not found.`);
+  }
+
+  return leaveType.id;
+}
