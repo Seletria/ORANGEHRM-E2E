@@ -54,3 +54,27 @@ export async function getLeaveTypeIdByName(request, name) {
 
   return leaveType.id;
 }
+
+export async function addLeaveEntitlement(request, empNumber, leaveTypeId, entitlement) {
+  const currentYear = new Date().getFullYear();
+
+  const response = await request.post('/api/v2/leave/leave-entitlements', {
+    data: {
+      empNumber,
+      leaveTypeId,
+      fromDate: `${currentYear}-01-01`,
+      toDate: `${currentYear}-12-31`,
+      entitlement: entitlement.toString(),
+    }
+  });
+
+  if (!response.ok()) {
+    throw new Error(`Leave entitlement creation failed: ${response.status()}`);
+  }
+}
+
+export async function ensureLeaveBalance(request, username, leaveTypeName, days) {
+  const empNumber = await getEmpNumberByUsername(request, username);
+  const leaveTypeId = await getLeaveTypeIdByName(request, leaveTypeName);
+  const leaveEntitlement = await addLeaveEntitlement(request, empNumber, leaveTypeId, days);
+}
