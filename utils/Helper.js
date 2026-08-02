@@ -27,7 +27,7 @@ export async function createJobTitleAndExpectStatus(request, title, description 
 }
 
 export async function getEmpNumberByUsername(request, username) {
-  const response = await request.get(`/api/v2/admin/users?username=${username}`);
+  const response = await request.get(`/web/index.php/api/v2/admin/users?username=${username}`);
 
   if (!response.ok()) {
     throw new Error(`User search request failed: ${response.status()}`)
@@ -40,7 +40,8 @@ export async function getEmpNumberByUsername(request, username) {
 }
 
 export async function getLeaveTypeIdByName(request, name) {
-  const response = await request.get('/api/v2/leave/leave-types?limit=0');
+  const response = await request.get('/web/index.php/api/v2/leave/leave-types?limit=0');
+
   if (!response.ok()) {
     throw new Error(`Leave type search request failed: ${response.status()}`);
   }
@@ -58,7 +59,7 @@ export async function getLeaveTypeIdByName(request, name) {
 export async function addLeaveEntitlement(request, empNumber, leaveTypeId, entitlement) {
   const currentYear = new Date().getFullYear();
 
-  const response = await request.post('/api/v2/leave/leave-entitlements', {
+  const response = await request.post('/web/index.php/api/v2/leave/leave-entitlements', {
     data: {
       empNumber,
       leaveTypeId,
@@ -76,5 +77,18 @@ export async function addLeaveEntitlement(request, empNumber, leaveTypeId, entit
 export async function ensureLeaveBalance(request, username, leaveTypeName, days) {
   const empNumber = await getEmpNumberByUsername(request, username);
   const leaveTypeId = await getLeaveTypeIdByName(request, leaveTypeName);
-  const leaveEntitlement = await addLeaveEntitlement(request, empNumber, leaveTypeId, days);
+  await addLeaveEntitlement(request, empNumber, leaveTypeId, days);
+}
+
+export async function cancelLeaveRequest(request, leaveRequestId) {
+
+  const response = await request.put(`/web/index.php/api/v2/leave/employees/leave-requests/${leaveRequestId}`, {
+    data: {
+      action: 'CANCEL'
+    }
+  });
+
+  if (!response.ok()) {
+    throw new Error(`Cancel leave request failed: ${response.status()}`);
+  }
 }

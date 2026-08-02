@@ -32,6 +32,9 @@ export default defineConfig({
     baseURL: process.env.BASE_URL,
     storageState: 'storageState.json',
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+    extraHTTPHeaders: {
+      'Referer': `${process.env.BASE_URL}/web/index.php/leave/addLeaveEntitlement`,
+    },
     trace: 'on-first-retry',
   },
 
