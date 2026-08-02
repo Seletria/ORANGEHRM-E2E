@@ -22,7 +22,7 @@ export class ApplyPage {
 
     this.applyButton = page.getByRole("button", { name: 'Apply' });
 
-    this.successToast = page.locator('.oxd-toast');
+    this.successToast = page.locator('.oxd-toast--success');
   }
 
   async goto() {

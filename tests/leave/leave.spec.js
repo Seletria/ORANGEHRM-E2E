@@ -26,6 +26,8 @@ test.describe('Leave Page', () => {
     await applyPage.selectLeaveTypeAndFillLeaveDates(LEAVE_TYPE_NAME, '2026-26-08', '2026-30-08');
     leaveRequestId = await applyPage.applyLeave();
 
+    // const toastHTML = await page.locator('#oxd-toaster_1').innerHTML();
+    // console.log('TOAST HTML:', toastHTML);
     await expect(applyPage.successToast).toBeVisible();
   })
 })
