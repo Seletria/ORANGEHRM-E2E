@@ -92,3 +92,22 @@ export async function cancelLeaveRequest(request, leaveRequestId) {
     throw new Error(`Cancel leave request failed: ${response.status()}`);
   }
 }
+
+export async function createLeaveRequest(request, leaveTypeId, fromDate, toDate) {
+  const response = await request.post(`/web/index.php/api/v2/leave/leave-requests`, {
+    data: {
+      leaveTypeId,
+      fromDate,
+      toDate,
+      comment: null
+    }
+  });
+
+  if (!response.ok()) {
+    throw new Error(`Leave request creation failed: ${response.status()}`);
+  }
+
+  const body = await response.json();
+
+  return body.data.id;
+}
