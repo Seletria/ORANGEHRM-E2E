@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../fixtures/auth';
 import { NavigationMenu } from '../../pages/NavigationMenu';
 import { PimListPage } from '../../pages/pim/PimListPage';
 import { AddEmployeePage } from '../../pages/pim/AddEmployeePage';

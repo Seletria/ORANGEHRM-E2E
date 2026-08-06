@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../fixtures/auth';
 import { JobTitlesPage } from '../../pages/admin/JobTitlesPage';
 import { getJobTitleIdByName, deleteJobTitleAndExpectStatus, createJobTitleAndExpectStatus } from '../../utils/Helper';
 
