@@ -15,7 +15,6 @@ dotenv.config({ path: path.resolve(__dirname, '.env') });
 export default defineConfig({
   testDir: './tests',
   timeout: 60000,
-  globalSetup: require.resolve('./global-setup'),
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -30,11 +29,7 @@ export default defineConfig({
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
     baseURL: process.env.BASE_URL,
-    storageState: 'storageState.json',
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    extraHTTPHeaders: {
-      'Referer': `${process.env.BASE_URL}/web/index.php/leave/addLeaveEntitlement`,
-    },
     trace: 'on-first-retry',
   },
 
