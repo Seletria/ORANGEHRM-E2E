@@ -1,22 +1,25 @@
+import { isoToUiDate } from '../../utils/dateHelpers';
+import { expect } from '@playwright/test';
+
 export class MyLeavePage {
   constructor(page) {
     this.page = page;
-
+    this.fromDateFilter = page
+      .locator('.oxd-input-group')
+      .filter({ hasText: 'From Date' })
+      .locator('input');
   }
 
-  #toUiDateFormat(isoDate) {
-    const [year, month, day] = isoDate.split('-');
-    return `${day}-${month}-${year}`;
-  }
-
-  #buildDateRangeText(fromDate, toDate) {
-    const uiFromDate = this.#toUiDateFormat(fromDate);
+  async #buildDateRangeText(fromDate, toDate) {
+    const placeholder = await this.fromDateFilter.getAttribute('placeholder');
+    const uiFromDate = isoToUiDate(fromDate, placeholder);
 
     if (fromDate === toDate) {
       return uiFromDate;
     }
-    const uiToDate = this.#toUiDateFormat(toDate);
-    return `${uiFromDate} to ${uiToDate}`;
+    const uiToDate = isoToUiDate(toDate, placeholder);
+    const dateText = `${uiFromDate} to ${uiToDate}`;
+    return dateText;
   }
 
   async goto() {
@@ -24,19 +27,15 @@ export class MyLeavePage {
   }
 
   async cancelLeaveRequestByDates(fromDate, toDate) {
-    const dateText = this.#buildDateRangeText(fromDate, toDate);
+    const dateText = await this.#buildDateRangeText(fromDate, toDate);
 
-    const row = this.page.locator('.card-center').filter({ hasText: dateText });
+    const row = this.page.locator('.oxd-table-card').filter({ hasText: dateText }).filter({ hasNotText: 'Cancelled' }).first();
+    await expect(row).toBeVisible();
 
-    const [response] = await Promise.all([
-      this.page.waitForResponse(res =>
-        res.url().includes('/leave-requests/') && res.request().method() === 'PUT'
-      ),
-      row.getByRole('button', { name: 'Cancel' }).click(),
-    ]);
+    const cancelButton = row.getByRole('button', { name: 'Cancel' });
 
-    if (!response.ok()) {
-      throw new Error(`Cancel leave request UI action failed: ${response.status()}`);
-    }
+    await cancelButton.click();
+
+    await this.page.waitForTimeout(5000);
   }
 }

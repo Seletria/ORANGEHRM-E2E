@@ -1,4 +1,5 @@
 import { expect } from '@playwright/test';
+import { isoToUiDate } from '../../utils/dateHelpers';
 
 export class ApplyPage {
 
@@ -30,15 +31,19 @@ export class ApplyPage {
   }
 
   async selectLeaveTypeAndFillLeaveDates(leaveTypeName, fromDate, toDate) {
+    const placeholder = await this.fromDatePicker.getAttribute('placeholder');
+    const uiFromDate = isoToUiDate(fromDate, placeholder);
+    const uiToDate = isoToUiDate(toDate, placeholder);
+
     await this.leaveTypeDropdown.click();
     await this.page.locator('.oxd-select-option').getByText(leaveTypeName, { exact: true }).click();
 
     await this.fromDatePicker.click();
-    await this.fromDatePicker.pressSequentially(fromDate);
+    await this.fromDatePicker.pressSequentially(uiFromDate);
 
     await this.toDatePicker.click();
     await this.toDatePicker.fill('');
-    await this.toDatePicker.pressSequentially(toDate);
+    await this.toDatePicker.pressSequentially(uiToDate);
   }
 
   async applyLeave() {
