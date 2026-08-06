@@ -1,18 +1,38 @@
-import { expect } from "@playwright/test";
+import { getRandomWorkdayIsoDate } from "./dateHelpers";
+
+export async function getRandomLeaveDate(request, minOffsetDays = 30) {
+  const period = await getCurrentLeavePeriod(request);
+  const today = new Date();
+  const periodEnd = new Date(period.endDate);
+  const maxOffsetDays = Math.floor((periodEnd - today) / (1000 * 60 * 60 * 24)) - 1;
+
+  return getRandomWorkdayIsoDate(minOffsetDays, maxOffsetDays);
+}
+
+async function assertOk(response, context, expectedStatus = null) {
+  const status = response.status();
+  const isExpected = expectedStatus !== null ? status === expectedStatus : response.ok();
+
+  if (!isExpected) {
+    const body = await response.text().catch(() => '<no body>');
+    const expectation = expectedStatus !== null ? `status ${expectedStatus}` : 'a 2xx status';
+    throw new Error(`${context} failed: expected ${expectation}, got ${status} — ${body}`);
+  }
+}
 
 export async function getJobTitleIdByName(request, title) {
   const response = await request.get('/web/index.php/api/v2/admin/job-titles');
+  await assertOk(response, 'Job title search request');
   const body = await response.json();
   const match = body.data.find(jobTitle => jobTitle.title === title);
   return match ? match.id : null;
-
 }
 
 export async function deleteJobTitleAndExpectStatus(request, id, expectedStatus = 200) {
   const response = await request.delete('/web/index.php/api/v2/admin/job-titles', {
     data: { ids: [id] }
-  })
-  expect(response.status()).toBe(expectedStatus);
+  });
+  await assertOk(response, 'Job title delete request', expectedStatus);
   return response;
 }
 
@@ -20,18 +40,15 @@ export async function createJobTitleAndExpectStatus(request, title, description 
   const response = await request.post('/web/index.php/api/v2/admin/job-titles', {
     data: { title, description, specification: null, note: '' }
   });
-
-  expect(response.status()).toBe(200);
+  await assertOk(response, 'Job title creation request');
   const id = await getJobTitleIdByName(request, title);
   return id;
 }
 
 export async function getEmpNumberByUsername(request, username) {
   const response = await request.get(`/web/index.php/api/v2/admin/users?username=${username}`);
+  await assertOk(response, 'User search request');
 
-  if (!response.ok()) {
-    throw new Error(`User search request failed: ${response.status()}`)
-  };
   const body = await response.json();
   if (!body.data || body.data.length === 0) {
     throw new Error(`A user with the username '${username}' was not found.`);
@@ -41,10 +58,7 @@ export async function getEmpNumberByUsername(request, username) {
 
 export async function getLeaveTypeIdByName(request, name) {
   const response = await request.get('/web/index.php/api/v2/leave/leave-types?limit=0');
-
-  if (!response.ok()) {
-    throw new Error(`Leave type search request failed: ${response.status()}`);
-  }
+  await assertOk(response, 'Leave type search request');
 
   const body = await response.json();
   const leaveType = body.data.find(type => type.name === name);
@@ -57,21 +71,19 @@ export async function getLeaveTypeIdByName(request, name) {
 }
 
 export async function addLeaveEntitlement(request, empNumber, leaveTypeId, entitlement) {
-  const currentYear = new Date().getFullYear();
+  const period = await getCurrentLeavePeriod(request);
 
   const response = await request.post('/web/index.php/api/v2/leave/leave-entitlements', {
     data: {
       empNumber,
       leaveTypeId,
-      fromDate: `${currentYear}-01-01`,
-      toDate: `${currentYear}-12-31`,
+      fromDate: period.startDate,
+      toDate: period.endDate,
       entitlement: entitlement.toString(),
     }
   });
 
-  if (!response.ok()) {
-    throw new Error(`Leave entitlement creation failed: ${response.status()}`);
-  }
+  await assertOk(response, 'Leave entitlement creation');
 }
 
 export async function ensureLeaveBalance(request, username, leaveTypeName, days) {
@@ -81,16 +93,13 @@ export async function ensureLeaveBalance(request, username, leaveTypeName, days)
 }
 
 export async function cancelLeaveRequest(request, leaveRequestId) {
-
   const response = await request.put(`/web/index.php/api/v2/leave/employees/leave-requests/${leaveRequestId}`, {
     data: {
       action: 'CANCEL'
     }
   });
 
-  if (!response.ok()) {
-    throw new Error(`Cancel leave request failed: ${response.status()}`);
-  }
+  await assertOk(response, 'Cancel leave request');
 }
 
 export async function createLeaveRequest(request, leaveTypeId, fromDate, toDate) {
@@ -102,12 +111,15 @@ export async function createLeaveRequest(request, leaveTypeId, fromDate, toDate)
       comment: null
     }
   });
-
-  if (!response.ok()) {
-    throw new Error(`Leave request creation failed: ${response.status()}`);
-  }
+  await assertOk(response, 'Leave request creation');
 
   const body = await response.json();
-
   return body.data.id;
+}
+
+export async function getCurrentLeavePeriod(request) {
+  const response = await request.get(`/web/index.php/api/v2/leave/leave-periods`);
+  await assertOk(response, 'Leave period fetch');
+  const body = await response.json();
+  return body.meta.currentLeavePeriod;
 }
