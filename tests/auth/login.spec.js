@@ -7,7 +7,7 @@ test('should login successfully with valid credentials', async ({ page }) => {
 
   const loginPage = new LoginPage(page);
   await loginPage.goto();
-  await loginPage.login('Admin', 'admin123');
+  await loginPage.login(process.env.ADMIN_USERNAME, process.env.ADMIN_PASSWORD);
 
   await expect(page).toHaveURL(/.*\/dashboard\/index/);
 })

@@ -18,8 +18,7 @@ export class MyLeavePage {
       return uiFromDate;
     }
     const uiToDate = isoToUiDate(toDate, placeholder);
-    const dateText = `${uiFromDate} to ${uiToDate}`;
-    return dateText;
+    return `${uiFromDate} to ${uiToDate}`;
   }
 
   async goto() {
@@ -29,13 +28,24 @@ export class MyLeavePage {
   async cancelLeaveRequestByDates(fromDate, toDate) {
     const dateText = await this.#buildDateRangeText(fromDate, toDate);
 
-    const row = this.page.locator('.oxd-table-card').filter({ hasText: dateText }).filter({ hasNotText: 'Cancelled' }).first();
+    const row = this.page
+      .locator('.oxd-table-card')
+      .filter({ hasText: dateText })
+      .filter({ hasNotText: 'Cancelled' })
+      .first();
+
     await expect(row).toBeVisible();
 
     const cancelButton = row.getByRole('button', { name: 'Cancel' });
+    const [response] = await Promise.all([
+      this.page.waitForResponse(res =>
+        res.url().includes('/leave-requests/') && res.request().method() === 'PUT'
+      ),
+      cancelButton.click(),
+    ]);
 
-    await cancelButton.click();
-
-    await this.page.waitForTimeout(5000);
+    if (!response.ok()) {
+      throw new Error(`Cancel leave request UI action failed: ${response.status()}`);
+    }
   }
 }
