@@ -10,7 +10,7 @@ export class AddEmployeePage {
 
   async fillEmployeeInformation() {
     const randomWord = Array.from({ length: 5 }, () => "abcdefghijklmnopqrstuvwxyz"[Math.floor(Math.random() * 26)]).join('');
-    const randomIdNumber = Math.floor(Math.random() * 1000).toString().padStart(4, '0');
+    const randomIdNumber = Date.now().toString().slice(-10);
 
     await this.firstNameInput.fill(randomWord);
     await this.middleNameInput.fill(randomWord);
@@ -21,5 +21,11 @@ export class AddEmployeePage {
 
   async saveEmployeeInformation() {
     await this.saveButton.click();
+  }
+
+  async getCreatedEmpNumber() {
+    await this.page.waitForURL(/.*viewPersonalDetails\/empNumber\/(\d+)/);
+    const match = this.page.url().match(/empNumber\/(\d+)/);
+    return match ? match[1] : null;
   }
 }
