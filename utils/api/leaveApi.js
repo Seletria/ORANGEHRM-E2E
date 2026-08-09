@@ -52,7 +52,14 @@ export async function addLeaveEntitlement(request, empNumber, leaveTypeId, entit
 export async function ensureLeaveBalance(request, username, leaveTypeName, days) {
   const empNumber = await getEmpNumberByUsername(request, username);
   const leaveTypeId = await getLeaveTypeIdByName(request, leaveTypeName);
-  await addLeaveEntitlement(request, empNumber, leaveTypeId, days);
+  const period = await getCurrentLeavePeriod(request);
+
+  const currentBalance = await getLeaveEntitlementSum(request, leaveTypeId, period.startDate, period.endDate);
+  const deficit = days - currentBalance;
+
+  if (deficit > 0) {
+    await addLeaveEntitlement(request, empNumber, leaveTypeId, days);
+  }
 }
 
 export async function cancelLeaveRequest(request, leaveRequestId) {
@@ -87,4 +94,17 @@ export async function getRandomLeaveDate(request, minOffsetDays = 30) {
   const maxOffsetDays = Math.floor((periodEnd - today) / (1000 * 60 * 60 * 24)) - 1;
 
   return getRandomWorkdayIsoDate(minOffsetDays, maxOffsetDays);
+}
+
+export async function getLeaveEntitlementSum(request, leaveTypeId, fromDate, toDate) {
+  const response = await request.get(
+    `/web/index.php/api/v2/leave/leave-entitlements?fromDate=${fromDate}&toDate=${toDate}`
+  )
+
+  await assertOk(response, 'Leave entitlement fetch');
+  const body = await response.json();
+
+  return body.data
+    .filter(e => e.leaveType.id === leaveTypeId)
+    .reduce((sum, e) => sum + e.entitlement, 0);
 }
