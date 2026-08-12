@@ -1,7 +1,7 @@
-import { test, expect } from '../../fixtures/auth';
-import { ApplyPage } from '../../pages/leave/ApplyPage';
-import { ensureLeaveBalance, cancelLeaveRequest, createLeaveRequest, getLeaveTypeIdByName, getRandomLeaveDate } from '../../api/Leave.api';
-import { MyLeavePage } from '../../pages/leave/MyLeavePage';
+import { test, expect } from '../../fixtures/auth.js';
+import { ApplyPage } from '../../pages/leave/ApplyPage.js';
+import { ensureLeaveBalance, cancelLeaveRequest, createLeaveRequest, getLeaveTypeIdByName, getRandomLeaveDate } from '../../api/Leave.api.js';
+import { MyLeavePage } from '../../pages/leave/MyLeavePage.js';
 
 const LEAVE_TYPE_NAME = 'CAN - Bereavement';
 const LEAVE_DAYS = 10;

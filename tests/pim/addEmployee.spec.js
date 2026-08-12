@@ -1,8 +1,8 @@
-import { test, expect } from '../../fixtures/auth';
-import { NavigationMenu } from '../../pages/NavigationMenu';
-import { PimListPage } from '../../pages/pim/PimListPage';
-import { AddEmployeePage } from '../../pages/pim/AddEmployeePage';
-import { deleteEmployeeAndExpectStatus } from '../../api/Employee.api';
+import { test, expect } from '../../fixtures/auth.js';
+import { NavigationMenu } from '../../pages/NavigationMenu.js';
+import { PimListPage } from '../../pages/pim/PimListPage.js';
+import { AddEmployeePage } from '../../pages/pim/AddEmployeePage.js';
+import { deleteEmployeeAndExpectStatus } from '../../api/Employee.api.js';
 
 test.describe('Add Employee', () => {
   let empNumber;

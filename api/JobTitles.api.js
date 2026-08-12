@@ -1,4 +1,4 @@
-import { assertOk } from '../utils/assert.utils';
+import { assertOk } from '../utils/assert.utils.js';
 
 export async function getJobTitleIdByName(request, title) {
   const response = await request.get('/web/index.php/api/v2/admin/job-titles');

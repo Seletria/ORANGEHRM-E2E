@@ -1,5 +1,5 @@
-import { test, expect } from '../../fixtures/auth';
-import { JobTitlesPage } from '../../pages/admin/JobTitlesPage';
+import { test, expect } from '../../fixtures/auth.js';
+import { JobTitlesPage } from '../../pages/admin/JobTitlesPage.js';
 import { getJobTitleIdByName, deleteJobTitleAndExpectStatus, createJobTitleAndExpectStatus } from '../../api/JobTitles.api.js';
 
 test.describe('Job Titles', () => {

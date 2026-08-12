@@ -1,5 +1,5 @@
 import { test as base, expect } from '@playwright/test';
-import { LoginPage } from '../pages/LoginPage';
+import { LoginPage } from '../pages/LoginPage.js';
 
 export const test = base.extend({
   storageState: async ({ browser, baseURL }, use) => {
