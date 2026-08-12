@@ -1,6 +1,6 @@
 import { test, expect } from '../../fixtures/auth';
 import { ApplyPage } from '../../pages/leave/ApplyPage';
-import { ensureLeaveBalance, cancelLeaveRequest, createLeaveRequest, getLeaveTypeIdByName, getRandomLeaveDate } from '../../utils/api/leaveApi';
+import { ensureLeaveBalance, cancelLeaveRequest, createLeaveRequest, getLeaveTypeIdByName, getRandomLeaveDate } from '../../api/Leave.api';
 import { MyLeavePage } from '../../pages/leave/MyLeavePage';
 
 const LEAVE_TYPE_NAME = 'CAN - Bereavement';

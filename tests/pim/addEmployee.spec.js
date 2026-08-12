@@ -2,7 +2,7 @@ import { test, expect } from '../../fixtures/auth';
 import { NavigationMenu } from '../../pages/NavigationMenu';
 import { PimListPage } from '../../pages/pim/PimListPage';
 import { AddEmployeePage } from '../../pages/pim/AddEmployeePage';
-import { deleteEmployeeAndExpectStatus } from '../../utils/api/employeeApi';
+import { deleteEmployeeAndExpectStatus } from '../../api/Employee.api';
 
 test.describe('Add Employee', () => {
   let empNumber;
