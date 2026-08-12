@@ -1,5 +1,5 @@
 import { assertOk } from '../assert.utils';
-import { getRandomWorkdayIsoDate } from '../dateHelpers';
+import { getRandomWorkdayIsoDate } from '../date.utils.js';
 
 export async function getEmpNumberByUsername(request, username) {
   const response = await request.get(`/web/index.php/api/v2/admin/users?username=${username}`);
