@@ -1,4 +1,4 @@
-import { assertOk } from './assertOk';
+import { assertOk } from '../assert.utils';
 import { getRandomWorkdayIsoDate } from '../dateHelpers';
 
 export async function getEmpNumberByUsername(request, username) {
