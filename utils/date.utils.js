@@ -24,6 +24,13 @@ export function isWeekend(isoDate) {
 }
 
 export function getRandomWorkdayIsoDate(minOffsetDays, maxOffsetDays) {
+  if (maxOffsetDays <= minOffsetDays) {
+    throw new Error(
+      `Invalid offset range: maxOffsetDays (${maxOffsetDays}) must be greater than minOffsetDays (${minOffsetDays}). ` +
+      `This usually means the leave period is ending soon and there isn't enough room to pick a valid date.`
+    );
+  }
+
   let candidate;
   do {
     const offset = minOffsetDays + Math.floor(Math.random() * (maxOffsetDays - minOffsetDays));
